@@ -7,7 +7,7 @@ $( document ).ready(function() {
 		// stop button from submitting form
 		event.preventDefault();
 
-		var play = $(this).attr('class');
+		var play = $(this).attr('id');
 		game.getMove(play);
 	})
 });

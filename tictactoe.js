@@ -17,20 +17,18 @@ window.app.ttt = {
 		this.boardContainer = config.boardElement || $("#gameboard");
 		this.debugFlag = config.debugFlag || true;
 		this.board = [];
-		this.player = 1;
-		this.counter = 0;
-
-		// build out array
+		// trying to get board to initialize properly
 		for(i=1;i<10;i++){
-			this.board[i] = '';
+			this.board[i] = 0;
 		}
+		this.boardStatus();
 		this.debug('board array populated');
 
+		this.player = 1;
+		this.counter = 0;
+		this.feedback = '';
+
 		this.setupBoard();
-//		while(this.counter < 2) {
-//			this.player = this.nextTurn(this.player);
-//		};
-//		this.endGame();
 	}, 
 
 
@@ -48,7 +46,7 @@ window.app.ttt = {
 
 		// cells
 		for(i=1;i<10;i++){
-			var sq = $('<button class="'+i+'"/>')
+			var sq = $('<button id="'+i+'"/>')
 				.addClass(i)
 				.text('')
 				.height(width);
@@ -60,6 +58,8 @@ window.app.ttt = {
 		var el = '<div class="ttt-feedback"/>';
 		this.boardContainer.append(el);
 
+		this.debug('Setup complete');
+
 	},
 
 	/* 
@@ -67,14 +67,28 @@ window.app.ttt = {
 	*/
 	getMove : function(square) {
 		// square chosen
-		this.debug('played '+square);
-		this.board[square] = this.player;
-		this.updateBoard();
-		if(!this.isGameOver(this.counter)){
-			this.player = this.nextTurn(this.player);
+		this.debug('\nMove detected at square '+square+', currently set to '+this.board[square]);
+		if(this.isMoveValid(square)) {
+			this.board[square] = this.player;
+			this.updateBoard();
+			if(!this.isGameOver(this.counter)){
+				this.player = this.nextTurn(this.player);
+			} else {
+				this.endGame();
+			}
 		} else {
-			this.endGame();
+			// this.feedback('Invalid move');
+			alert('invalid move');
 		}
+		this.boardStatus();
+		this.debug('... awaiting next move');
+	},
+
+	/* 
+	 * jquery-1.6.1.min.js
+	*/
+	isMoveValid : function(square) {
+		return (this.board[square] > 0) ? false : true;
 	},
 
 	/* 
@@ -82,14 +96,14 @@ window.app.ttt = {
 	*/
 	updateBoard : function() {
 		// square chosen
-		console.log('Board status');
+		// this.debug('Board status');
 		for(i=1;i<10;i++){
-			console.log('sq '+i+': '+this.board[i]);
+			// this.debug('sq '+i+': '+this.board[i]);
 			if(this.board[i]===1) {
-				$('form button[class="'+i+'"]').addClass('x');
+				$('form button[id="'+i+'"]').addClass('x');
 			}
 			if(this.board[i]===2) {
-				$('form button[class="'+i+'"]').addClass('o');
+				$('form button[id="'+i+'"]').addClass('o');
 			}
 		}
 	},
@@ -99,6 +113,7 @@ window.app.ttt = {
 	*/
 	nextTurn : function(player) {
 		this.counter++;
+		this.debug("counter at "+this.counter);
 		return (player===2) ? 1 : 2;
 	},
 
@@ -107,6 +122,7 @@ window.app.ttt = {
 	*/
 	isGameOver : function(counter) {
 		// There are eight winning conditions - check for each of them
+		this.debug("Checking for game over (counter at "+counter+")");
 		if(this.board[1] > 0){
 			if(
 				(this.board[1] === this.board[2] && this.board[1] === this.board[3]) ||
@@ -139,8 +155,30 @@ window.app.ttt = {
 				return true;
 			}
 		}
+		if(this.counter===8){
+			console.log('Stalemate!');
+			return true;
+		}
 		return false;
 		// is board full?
+	},
+
+	/* 
+	 * 
+	*/
+	feedback: function(msg) {
+		$('.ttt-feedback').text('Hello!');
+	},
+
+	/* 
+	 * 
+	*/
+	boardStatus: function() {
+		var boardState = '';
+		for(i=1;i<10;i++){
+			boardState+=this.board[i]+'_';
+		}
+		this.debug('Board: '+boardState);
 	},
 
 	/* 
@@ -153,8 +191,23 @@ window.app.ttt = {
 	},
 
 	endGame : function() {
-		alert('The Game Is Over!');
+		alert('The Game Is Over! Click OK to play again.');
+		this.resetGame();
+	},
+
+	/* 
+	 * 
+	*/
+	resetGame : function() {
+		for(i=1;i<10;i++){
+			this.board[i] = 0;
+			$('form button[id="'+i+'"]').attr('class','');
+		}
+		this.counter = 0;
+		this.player = 1;
+		this.debug('Board reset');
 	}
+
 }
 
 
