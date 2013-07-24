@@ -114,6 +114,7 @@ window.app.ttt = {
 	nextTurn : function(player) {
 		this.counter++;
 		this.debug("counter at "+this.counter);
+		$('form').toggleClass('o');
 		return (player===2) ? 1 : 2;
 	},
 
