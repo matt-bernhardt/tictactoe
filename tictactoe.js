@@ -204,6 +204,7 @@ window.app.ttt = {
 			this.board[i] = 0;
 			$('form button[id="'+i+'"]').attr('class','');
 		}
+		$('form').removeClass('o');
 		this.counter = 0;
 		this.player = 1;
 		this.debug('Board reset');
