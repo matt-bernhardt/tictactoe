@@ -15,7 +15,7 @@ window.app.ttt = {
 	initialize : function(config) {
 		config = config || {};
 		this.boardContainer = config.boardElement || $("#gameboard");
-		this.debugFlag = config.debugFlag || true;
+		this.debugFlag = config.debugFlag || false;
 		this.board = [];
 		// trying to get board to initialize properly
 		for(i=1;i<10;i++){
